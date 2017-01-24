@@ -1,21 +1,3 @@
-import processing.core.*; 
-import processing.data.*; 
-import processing.event.*; 
-import processing.opengl.*; 
-
-import controlP5.*; 
-
-import java.util.HashMap; 
-import java.util.ArrayList; 
-import java.io.File; 
-import java.io.BufferedReader; 
-import java.io.PrintWriter; 
-import java.io.InputStream; 
-import java.io.OutputStream; 
-import java.io.IOException; 
-
-public class OS_RADAR extends PApplet {
-
 //////////////////////////////////
 //////     OS_RADAR v2.0    //////
 //////////////////////////////////
@@ -37,7 +19,7 @@ Screenhunter then runs in the background making a screenshot of the PC screen ev
 */
 
 // import controlP5 library for UI
-
+import controlP5.*;
 
 // some general variables
 PImage webImg;
@@ -49,6 +31,7 @@ XML xmlConfig;
 int positionX, positionY;
 String xmlUrl;
 String xmlSave;
+String imgLoad;
 
 // variables for analyzing the sampled pixel
 float sampleH;
@@ -78,7 +61,7 @@ int timerOverride;;
 //////////////////////////////////
 // runs when you start the program
 
-public void setup ()  
+void setup ()  
 {
   // set timer to 5 minute countdown
   timer = 5;
@@ -87,7 +70,7 @@ public void setup ()
   isImgValid = true;
   
   // setup canvas width & height
-  
+  size (400,400);
   
   //////////////////////////////////
   //////   ADD UI CONTROLS    //////
@@ -201,7 +184,7 @@ public void setup ()
 //////   LOAD CONFIG   //////
 /////////////////////////////
 
-public void loadConfig ()
+void loadConfig ()
 {
   xmlConfig = loadXML ("config.xml");
   
@@ -209,13 +192,14 @@ public void loadConfig ()
   positionY = xmlConfig.getChild("imgPosition").getInt("y");
   xmlUrl = xmlConfig.getChild("xmlWeatherData").getString("url");
   xmlSave = xmlConfig.getChild("xmlSaveLocation").getString("path"); // C:/Users/Administrator/Dropbox/Weatherdata/
+  imgLoad = xmlConfig.getChild("imgLoad").getString("path");
 }
 
 /////////////////////////////////////
 //////   RUN SCRIPT FUNCTION   //////
 /////////////////////////////////////
 
-public void runScript ()
+void runScript ()
 {
   sampleImage ();
 
@@ -235,7 +219,7 @@ public void runScript ()
 ////////////////////////////////////////////////
 // converts the variables set in the UI to variables used to modify the weather data XML
 
-public void weatherOverride ()
+void weatherOverride ()
 {
     if (rain_snow ==  true)
     { 
@@ -255,7 +239,7 @@ public void weatherOverride ()
 ///////////////////////////////
 // updates every frame
 
-public void draw ()
+void draw ()
 {
   // run TIMER FUNCTION
   setTimer ();
@@ -273,7 +257,7 @@ public void draw ()
 //////    TIMER FUNCTION    //////
 //////////////////////////////////
 
-public void setTimer ()
+void setTimer ()
 {
   // when the computer clock starts a new minute, decrease the timer value by 1
   if (second () == 0)
@@ -295,16 +279,16 @@ public void setTimer ()
 //////////////////////////////////////////////////////
 // loads the captured screenshot and samples the hue, saturation & brightness
 // saturation & brightness are sampled in 8bit, so 100% is equal to a value of 255 (percent = 8bitvalue/255*100)
-// the hue is also sampled in 8bit, but it is translated from a color wheel value (360\u00b0) (angle = 8bitvalue/255*360)
+// the hue is also sampled in 8bit, but it is translated from a color wheel value (360°) (angle = 8bitvalue/255*360)
 
-public void sampleImage ()
+void sampleImage ()
 {
-  webImg = loadImage ("OS_RADAR.jpg");
+  webImg = loadImage (imgLoad);
     
   if (webImg != null)
   {
     image (webImg, -(positionX - 200), -(positionY - 220));
-    int samplePixel = get (200, 220);
+    color samplePixel = get (200, 220);
 
     fill (50);
     rect (0, 0, width, 100);
@@ -330,7 +314,7 @@ public void sampleImage ()
 //////////////////////////////////////////
 // analyzes the different components of the analyzed pixel and translates them to variables used to modify the weather data XML
 
-public void analyzePixel ()
+void analyzePixel ()
 {
   // black screenshot, so set XML date way back
   if (sampleB < 25)
@@ -391,7 +375,7 @@ public void analyzePixel ()
 ////////////////////////////////////////////////
 // loads the XML file from OpenWeatherMap and changes the precipitation & clouds elements to the new variables
 
-public void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
+void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
 {
   // Load XML file from OpenWeatherMap
   xmlWeatherData = loadXML(xmlUrl);
@@ -436,14 +420,4 @@ public void modifyWeatherData (boolean isImgValid, int mode, float value, float 
   
   // save altered XML file
   saveXML (xmlWeatherData, xmlSave);
-}
-  public void settings() {  size (400,400); }
-  static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "OS_RADAR" };
-    if (passedArgs != null) {
-      PApplet.main(concat(appletArgs, passedArgs));
-    } else {
-      PApplet.main(appletArgs);
-    }
-  }
 }

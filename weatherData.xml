@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<current>
+  <city id="7290251" name="Berlin Wilmersdorf">
+    <coord lat="52.5" lon="13.29"/>
+    <country>DE</country>
+    <sun rise="2017-01-24T06:59:24" set="2017-01-24T15:39:19"/>
+  </city>
+  <temperature max="-1" min="-1" unit="metric" value="-1"/>
+  <humidity unit="%" value="100"/>
+  <pressure unit="hPa" value="1028"/>
+  <wind>
+    <speed name="Light breeze" value="2.1"/>
+    <gusts/>
+    <direction code="WNW" name="West-northwest" value="290"/>
+  </wind>
+  <clouds name="overcast clouds" value="90"/>
+  <visibility value="3000"/>
+  <precipitation mode="no"/>
+  <weather icon="50d" number="701" value="mist"/>
+  <lastupdate value="2017-01-24T10:20:00"/>
+</current>
