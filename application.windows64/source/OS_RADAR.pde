@@ -1,21 +1,15 @@
 //////////////////////////////////
-//////     OS_RADAR v2.0    //////
+//////     OS_RADAR v3.0    //////
 //////////////////////////////////
 
 /*
-Date 2017/01/19
+Date 2017/07/06
 
 Created by Jasper Janssens for OLYMPIA STADION
 a video installation by David Claerbout
 
-This is a Processing v3.2.3 script written in Java
+This is a Processing v3.3.5 script written in Java
 using the controlP5 library for the user interface
-It is used in conjunction with a browser & Screenhunter Pro 6.0
-
-AT this time i configured firefox with extension 'Tab Reloader' that reloads this page every 5 minutes:
-https://weather.com/weather/radar/interactive/l/GMXX8440:1:GM
-
-Screenhunter then runs in the background making a screenshot of the PC screen every minute and saves this to the OS_RADAR script folder (eg. C:\OS_RADAR\)
 */
 
 // import controlP5 library for UI
@@ -64,13 +58,16 @@ int timerOverride;;
 void setup ()  
 {
   // set timer to 5 minute countdown
-  timer = 5;
+  timer = 15;
   
   // initialize variable
   isImgValid = true;
   
   // setup canvas width & height
   size (400,400);
+  
+  fill (50);
+  rect (0, 0, width, 100);
   
   //////////////////////////////////
   //////   ADD UI CONTROLS    //////
@@ -210,7 +207,7 @@ void runScript ()
   }
   else
   {
-    modifyWeatherData (true, 0, 0, 0);
+    modifyWeatherData (false, 0, 0, 0);
   }
 }
 
@@ -247,7 +244,7 @@ void draw ()
   // when timer runs out & weather override is OFF, reset timer & RUN SCRIPT FUNCTION
   if (timer <= 0 && on_off == false)
   {
-    timer = 5;
+    timer = 15;
     n1.setValue (timer);
     runScript ();
   }
@@ -283,13 +280,23 @@ void setTimer ()
 
 void sampleImage ()
 {
-  webImg = loadImage (imgLoad);
-    
+  try
+  {
+    webImg = loadImage (imgLoad, "png");
+  }
+  catch (Exception e)
+  {
+    print ("Image could not be loaded");
+  }
+  
   if (webImg != null)
   {
     image (webImg, -(positionX - 200), -(positionY - 220));
-    color samplePixel = get (200, 220);
+    color samplePixel = get (200 , 220);
 
+    //fill (0);
+    //rect (0, 0, width, height);
+    
     fill (50);
     rect (0, 0, width, 100);
     
@@ -324,7 +331,7 @@ void analyzePixel ()
   }
   
   // no precipitation
-  if (sampleS < 50 && sampleB > 230)
+  if (sampleS < 50)
   {
      weatherMode = 0;
      weatherValue = 0;
@@ -332,40 +339,44 @@ void analyzePixel ()
   }
    
   // rain
-  if (sampleH <= 106 || sampleH >= 245)
+  if (sampleH <= 120)
   {
      weatherMode = 1;
-      
-     if (sampleH >= 245)
-     {
-       sampleH = 0;
-     }
      
      if (sampleH >= 80)
      {
        sampleB = constrain (sampleB, 114, 205);
        weatherValue = map (sampleB, 114, 205, 50, 30);
-       weatherClouds = map (sampleB, 114, 205, 80, 60);
+       weatherClouds = map (sampleB, 114, 205, 75, 60);
        return;
      }
      
      if (sampleH < 80)
      {
        sampleH = constrain (sampleH, 0, 60);
-       weatherValue = map (sampleH, 0, 60, 100, 51);
-       weatherClouds = map (sampleH, 0, 60, 100, 81);
+       weatherValue = map (sampleH, 0, 60, 70, 51);
+       weatherClouds = map (sampleH, 0, 60, 90, 76);
        return;
      }
   }
+  
+  if (sampleH >= 200)
+  {
+    weatherMode = 1;
     
+    weatherValue = 70;
+    weatherClouds = 90;
+    return;
+  }
+
   // snow
-  if (sampleH >= 120 || sampleH < 245)
+  if (sampleH > 120 || sampleH < 200)
   {
     weatherMode = 2;
     
-    sampleB = constrain (sampleB, 160, 245);
-    weatherValue = map (sampleB, 160, 245, 100, 30);
-    weatherClouds = map (sampleB, 160, 245, 100, 60);
+    sampleB = constrain (sampleB, 80, 245);
+    weatherValue = map (sampleB, 80, 245, 100, 30);
+    weatherClouds = map (sampleB, 80, 245, 100, 60);
     return;
   }
 }

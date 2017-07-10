@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <current>
   <city id="7290251" name="Berlin Wilmersdorf">
-    <coord lat="52.5" lon="13.29"/>
+    <coord lat="52.51" lon="13.24"/>
     <country>DE</country>
-    <sun rise="2017-01-24T06:59:24" set="2017-01-24T15:39:19"/>
+    <sun rise="2017-07-10T02:57:18" set="2017-07-10T19:27:05"/>
   </city>
-  <temperature max="-1" min="-1" unit="metric" value="-1"/>
-  <humidity unit="%" value="100"/>
-  <pressure unit="hPa" value="1028"/>
+  <temperature max="20" min="20" unit="metric" value="20"/>
+  <humidity unit="%" value="88"/>
+  <pressure unit="hPa" value="1007"/>
   <wind>
-    <speed name="Light breeze" value="2.1"/>
+    <speed name="Calm" value="1.5"/>
     <gusts/>
-    <direction code="WNW" name="West-northwest" value="290"/>
+    <direction code="WNW" name="West-northwest" value="300"/>
   </wind>
-  <clouds name="overcast clouds" value="90"/>
-  <visibility value="3000"/>
+  <clouds name="broken clouds" value="75"/>
+  <visibility value="10000"/>
   <precipitation mode="no"/>
-  <weather icon="50d" number="701" value="mist"/>
-  <lastupdate value="2017-01-24T10:20:00"/>
+  <weather icon="04d" number="803" value="broken clouds"/>
+  <lastupdate value="2017-07-10T13:50:00"/>
 </current>
