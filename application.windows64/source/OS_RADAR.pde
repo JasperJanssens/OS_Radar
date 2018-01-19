@@ -26,6 +26,7 @@ int positionX, positionY;
 String xmlUrl;
 String xmlSave;
 String imgLoad;
+String CurrentweatherMode;
 
 // variables for analyzing the sampled pixel
 float sampleH;
@@ -41,7 +42,7 @@ float weatherClouds;
 // variables for creation of UI controls
 ControlP5 cp5;
 Toggle t1, t2;
-Numberbox n1;
+Numberbox n1, n2, n3;
 Slider s1;
 
 // variables for weather override, assigned to UI controls
@@ -97,6 +98,18 @@ void setup ()
           .setRange(0,300)
           .setLabel ("Timer")
           .setValue(timer);
+  // add numberbox to display current weather override mode 
+  n2 = cp5.addNumberbox("weatherMode")
+          .setPosition(160, 60)
+          .setSize(30, 20)
+          .setLabel("Weather mode")
+          .setValue(weatherMode);
+  
+  n3 = cp5.addNumberbox("weatherValues")
+          .setPosition(240, 60)
+          .setSize(30, 20)
+          .setLabel ("Weather values")
+          .setValue(weatherMode);
   
   // add slider for amount of precipitation
   s1 = cp5.addSlider ("sliderValue")
