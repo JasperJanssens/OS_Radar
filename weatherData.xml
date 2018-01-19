@@ -1,3 +1,4 @@
+<!--
 <?xml version="1.0" encoding="UTF-8"?>
 <current>
   <city id="7290251" name="Berlin Wilmersdorf">
@@ -19,3 +20,4 @@
   <weather icon="04d" number="803" value="broken clouds"/>
   <lastupdate value="2017-07-10T13:50:00"/>
 </current>
+->
