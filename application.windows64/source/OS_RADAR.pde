@@ -38,11 +38,12 @@ boolean isImgValid;
 int weatherMode;
 float weatherValue;
 float weatherClouds;
+String weatherValueStr, weatherModeStr;
 
 // variables for creation of UI controls
 ControlP5 cp5;
 Toggle t1, t2;
-Numberbox n1, n2, n3;
+Numberbox n1;
 Slider s1;
 
 // variables for weather override, assigned to UI controls
@@ -69,6 +70,7 @@ void setup ()
   
   fill (50);
   rect (0, 0, width, 100);
+ 
   
   //////////////////////////////////
   //////   ADD UI CONTROLS    //////
@@ -98,18 +100,18 @@ void setup ()
           .setRange(0,300)
           .setLabel ("Timer")
           .setValue(timer);
-  // add numberbox to display current weather override mode 
-  n2 = cp5.addNumberbox("weatherMode")
-          .setPosition(160, 60)
-          .setSize(30, 20)
-          .setLabel("Weather mode")
-          .setValue(weatherMode);
   
-  n3 = cp5.addNumberbox("weatherValues")
-          .setPosition(240, 60)
-          .setSize(30, 20)
-          .setLabel ("Weather values")
-          .setValue(weatherMode);
+  //n2 = cp5.addNumberbox("weatherMode")
+         // .setPosition(160, 60)
+         // .setSize(30, 20)
+         // .setLabel("Weather mode")
+         // .setValue(weatherMode);
+  
+  //n3 = cp5.addNumberbox("weatherValues")
+         // .setPosition(240, 60)
+         // .setSize(30, 20)
+         // .setLabel ("Weather values")
+         // .setValue(weatherMode);
   
   // add slider for amount of precipitation
   s1 = cp5.addSlider ("sliderValue")
@@ -326,6 +328,16 @@ void sampleImage ()
     line (200, 170, 200, 270);
     noFill ();
     ellipse (200, 220, 50, 50);
+    
+    weatherValueStr = nf(weatherValue);
+    //rect(160, 60, 30, 20);
+    text(weatherValueStr, 160, 60, 30, 20);
+    text("weatherValue", 160, 85);
+  
+    weatherModeStr = nf(weatherMode);
+    //rect(240, 60, 30, 20);
+    text(weatherModeStr, 240, 60, 30, 20);
+    text("weatherMode", 240, 85);
   }
 }
 
