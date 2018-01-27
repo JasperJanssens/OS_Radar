@@ -101,18 +101,6 @@ void setup ()
           .setLabel ("Timer")
           .setValue(timer);
   
-  //n2 = cp5.addNumberbox("weatherMode")
-         // .setPosition(160, 60)
-         // .setSize(30, 20)
-         // .setLabel("Weather mode")
-         // .setValue(weatherMode);
-  
-  //n3 = cp5.addNumberbox("weatherValues")
-         // .setPosition(240, 60)
-         // .setSize(30, 20)
-         // .setLabel ("Weather values")
-         // .setValue(weatherMode);
-  
   // add slider for amount of precipitation
   s1 = cp5.addSlider ("sliderValue")
           .setPosition (10, 60)
@@ -224,6 +212,8 @@ void runScript ()
   {
     modifyWeatherData (false, 0, 0, 0);
   }
+  // run displayReturnedValues here after sampleImage is called and values are set
+  displayReturnedValues ();
 }
 
 ////////////////////////////////////////////////
@@ -329,15 +319,6 @@ void sampleImage ()
     noFill ();
     ellipse (200, 220, 50, 50);
     
-    weatherValueStr = nf(weatherValue);
-    //rect(160, 60, 30, 20);
-    text(weatherValueStr, 160, 60, 30, 20);
-    text("weatherValue", 160, 85);
-  
-    weatherModeStr = nf(weatherMode);
-    //rect(240, 60, 30, 20);
-    text(weatherModeStr, 240, 60, 30, 20);
-    text("weatherMode", 240, 85);
   }
 }
 
@@ -405,6 +386,33 @@ void analyzePixel ()
     return;
   }
 }
+
+// Function to display weatherValue and weatherMode to simplify debugging and oversight of the program. 
+// This function is called in runScript()
+
+void displayReturnedValues()
+{
+  weatherValueStr = nf(weatherValue);
+  text(weatherValueStr, 160, 60, 30, 20);
+  text("weatherValue", 160, 85);
+  
+  if (weatherMode == 1)
+  { 
+    weatherModeStr = "Rain";
+  }
+  else if (weatherMode == 2)
+  {
+    weatherModeStr = "Snow";
+  }
+  else
+  {
+    weatherModeStr = "None";
+  }
+  
+  text(weatherModeStr, 240, 60, 40, 20);
+  text("weatherMode", 240, 85);
+}
+
 
 ////////////////////////////////////////////////
 //////    MODIFY WEATHER DATA FUNCTION    //////
