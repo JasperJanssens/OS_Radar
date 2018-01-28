@@ -52,6 +52,9 @@ boolean rain_snow = false;
 float sliderValue = 50;
 int timerOverride;;
 
+// variables for logging
+Table logWeatherData
+
 //////////////////////////////////
 //////    SETUP FUNCTION    //////
 //////////////////////////////////
@@ -212,6 +215,7 @@ void runScript ()
   {
     modifyWeatherData (false, 0, 0, 0);
   }
+  
   // run displayReturnedValues here after sampleImage is called and values are set
   displayReturnedValues ();
 }
@@ -387,33 +391,6 @@ void analyzePixel ()
   }
 }
 
-// Function to display weatherValue and weatherMode to simplify debugging and oversight of the program. 
-// This function is called in runScript()
-
-void displayReturnedValues()
-{
-  weatherValueStr = nf(weatherValue);
-  text(weatherValueStr, 160, 60, 30, 20);
-  text("weatherValue", 160, 85);
-  
-  if (weatherMode == 1)
-  { 
-    weatherModeStr = "Rain";
-  }
-  else if (weatherMode == 2)
-  {
-    weatherModeStr = "Snow";
-  }
-  else
-  {
-    weatherModeStr = "None";
-  }
-  
-  text(weatherModeStr, 240, 60, 40, 20);
-  text("weatherMode", 240, 85);
-}
-
-
 ////////////////////////////////////////////////
 //////    MODIFY WEATHER DATA FUNCTION    //////
 ////////////////////////////////////////////////
@@ -464,4 +441,55 @@ void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
   
   // save altered XML file
   saveXML (xmlWeatherData, xmlSave);
+}
+
+
+
+//////////////////////////////////////////
+/////     AUXILIARY FUNCTIONS        /////
+//////////////////////////////////////////
+
+void displayReturnedValues() // This function is called in runScript() and displays weatherValue and weatherMode in the GUI
+{
+  
+  fill(255);
+  
+  //Convert weatherValue to a string variable and displays it
+  weatherValueStr = nf(weatherValue);
+  text(weatherValueStr, 160, 60, 30, 20);
+  text("weatherValue", 160, 85);
+  
+  //Checks weatherMode and displays Snow, Rain or None depending on the conditions
+  if (weatherMode == 1)
+  { 
+    weatherModeStr = "Rain";
+  }
+  else if (weatherMode == 2)
+  {
+    weatherModeStr = "Snow";
+  }
+  else
+  {
+    weatherModeStr = "None";
+  }
+  
+  text(weatherModeStr, 240, 60, 40, 20);
+  text("weatherMode", 240, 85);
+}
+
+// WIP //
+// Adds a logger to the program to keep track of changes to Olympia
+// Reference tutorial: http://www.instructables.com/id/Data-Logging-SensorsInputs-With-Processing/
+
+void loggerWeatherData()
+{
+  // Initiate logWeatherData as new table
+  logWeatherData = new Table();
+  
+  // Add column headers to logWeatherData
+  logWeatherData.addColumn("Date");
+  logWeatherData.addColumn("Time");
+  logWeatherData.addColumn("WeatherOverride");
+  logWeatherData.addColumn("WeatherMode");
+  logWeatherData.addColumn("WeatherValue");
 }
