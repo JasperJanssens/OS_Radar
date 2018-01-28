@@ -3,19 +3,19 @@
   <city id="7290251" name="Berlin Wilmersdorf">
     <coord lat="52.51" lon="13.24"/>
     <country>DE</country>
-    <sun rise="2018-01-28T06:54:19" set="2018-01-28T15:46:26"/>
+    <sun rise="2018-01-28T06:53:53" set="2018-01-28T15:46:58"/>
   </city>
-  <temperature max="8" min="8" unit="metric" value="8"/>
+  <temperature max="9" min="8" unit="metric" value="8.48"/>
   <humidity unit="%" value="81"/>
   <pressure unit="hPa" value="1024"/>
   <wind>
-    <speed name="Moderate breeze" value="7.7"/>
+    <speed name="Moderate breeze" value="5.7"/>
     <gusts/>
-    <direction code="WSW" name="West-southwest" value="240"/>
+    <direction code="WSW" name="West-southwest" value="250"/>
   </wind>
   <clouds name="broken clouds" value="75"/>
-  <visibility value="9000"/>
+  <visibility value="10000"/>
   <precipitation mode="no"/>
-  <weather icon="09d" number="310" value="light intensity drizzle rain"/>
-  <lastupdate value="2018-01-28T11:50:00"/>
+  <weather icon="04n" number="803" value="broken clouds"/>
+  <lastupdate value="2018-01-28T18:20:00"/>
 </current>

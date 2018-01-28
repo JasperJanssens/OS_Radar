@@ -49,11 +49,18 @@ Slider s1;
 // variables for weather override, assigned to UI controls
 boolean on_off = false;
 boolean rain_snow = false;
+boolean isOverridden = false;
 float sliderValue = 50;
 int timerOverride;;
 
 // variables for logging
-Table logWeatherData
+Table logWeatherData;
+int d = day();
+int m = month();
+int y = year();
+int h = hour();
+int min = minute();
+String date;
 
 //////////////////////////////////
 //////    SETUP FUNCTION    //////
@@ -181,6 +188,8 @@ void setup ()
   
   loadConfig ();
   runScript ();
+  logWeatherDataSetup();
+  logWeatherDataWriteRow();
 }
 
 /////////////////////////////
@@ -227,14 +236,24 @@ void runScript ()
 
 void weatherOverride ()
 {
-    if (rain_snow ==  true)
-    { 
-      weatherMode = 1;
-    }  
-    else
-    {
-      weatherMode = 2;
-    }
+  if (rain_snow == true)
+  { 
+    weatherMode = 1;
+  }  
+  else
+  {
+    weatherMode = 2;
+  }
+    
+  // Set isOverridden boolean value
+  if (weatherMode == 1 || weatherMode == 2)
+  {
+    isOverridden = true;
+  }
+  else
+  {
+    isOverridden = false;
+  }
     
     weatherValue = sliderValue;
     weatherClouds = map (sliderValue, 30, 100, 60, 100);
@@ -255,6 +274,7 @@ void draw ()
   {
     timer = 15;
     n1.setValue (timer);
+    logWeatherDataWriteRow();
     runScript ();
   }
 }
@@ -449,7 +469,9 @@ void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
 /////     AUXILIARY FUNCTIONS        /////
 //////////////////////////////////////////
 
-void displayReturnedValues() // This function is called in runScript() and displays weatherValue and weatherMode in the GUI
+// This function displays weatherValue and weatherMode in the GUI
+// and is called in runScript()
+void displayReturnedValues() 
 {
   
   fill(255);
@@ -481,9 +503,10 @@ void displayReturnedValues() // This function is called in runScript() and displ
 // Adds a logger to the program to keep track of changes to Olympia
 // Reference tutorial: http://www.instructables.com/id/Data-Logging-SensorsInputs-With-Processing/
 
-void loggerWeatherData()
+
+// Setup logWeatherData as new Table
+void logWeatherDataSetup()
 {
-  // Initiate logWeatherData as new table
   logWeatherData = new Table();
   
   // Add column headers to logWeatherData
@@ -492,4 +515,19 @@ void loggerWeatherData()
   logWeatherData.addColumn("WeatherOverride");
   logWeatherData.addColumn("WeatherMode");
   logWeatherData.addColumn("WeatherValue");
+}
+
+// Function that will write value to log
+
+void logWeatherDataWriteRow()
+{
+  TableRow newRow = logWeatherData.addRow();
+  
+  newRow.setString("Date", str(y) + "/" + str(m) + "/" + str(d));
+  newRow.setString("Time", str(h) + ":" + str(min));
+  newRow.setString("WeatherOverride", str(isOverridden));
+  newRow.setString("WeatherMode", weatherModeStr);
+  newRow.setString("WeatherValue", weatherValueStr); 
+  
+  saveTable(logWeatherData, "log/" + str(y) + str(m) + str(d) + str(h) + str(min) + ".csv");
 }
