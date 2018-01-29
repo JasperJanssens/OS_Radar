@@ -49,8 +49,18 @@ Slider s1;
 // variables for weather override, assigned to UI controls
 boolean on_off = false;
 boolean rain_snow = false;
+boolean isOverridden = false;
 float sliderValue = 50;
 int timerOverride;;
+
+// variables for logging
+Table logWeatherData;
+int d = day();
+int m = month();
+int y = year();
+int h = hour();
+int min = minute();
+String date;
 
 //////////////////////////////////
 //////    SETUP FUNCTION    //////
@@ -178,6 +188,8 @@ void setup ()
   
   loadConfig ();
   runScript ();
+  logWeatherDataSetup();
+  logWeatherDataWriteRow();
 }
 
 /////////////////////////////
@@ -212,6 +224,7 @@ void runScript ()
   {
     modifyWeatherData (false, 0, 0, 0);
   }
+  
   // run displayReturnedValues here after sampleImage is called and values are set
   displayReturnedValues ();
 }
@@ -223,14 +236,24 @@ void runScript ()
 
 void weatherOverride ()
 {
-    if (rain_snow ==  true)
-    { 
-      weatherMode = 1;
-    }  
-    else
-    {
-      weatherMode = 2;
-    }
+  if (rain_snow == true)
+  { 
+    weatherMode = 1;
+  }  
+  else
+  {
+    weatherMode = 2;
+  }
+    
+  // Set isOverridden boolean value
+  if (weatherMode == 1 || weatherMode == 2)
+  {
+    isOverridden = true;
+  }
+  else
+  {
+    isOverridden = false;
+  }
     
     weatherValue = sliderValue;
     weatherClouds = map (sliderValue, 30, 100, 60, 100);
@@ -251,6 +274,7 @@ void draw ()
   {
     timer = 15;
     n1.setValue (timer);
+    logWeatherDataWriteRow();
     runScript ();
   }
 }
@@ -387,33 +411,6 @@ void analyzePixel ()
   }
 }
 
-// Function to display weatherValue and weatherMode to simplify debugging and oversight of the program. 
-// This function is called in runScript()
-
-void displayReturnedValues()
-{
-  weatherValueStr = nf(weatherValue);
-  text(weatherValueStr, 160, 60, 30, 20);
-  text("weatherValue", 160, 85);
-  
-  if (weatherMode == 1)
-  { 
-    weatherModeStr = "Rain";
-  }
-  else if (weatherMode == 2)
-  {
-    weatherModeStr = "Snow";
-  }
-  else
-  {
-    weatherModeStr = "None";
-  }
-  
-  text(weatherModeStr, 240, 60, 40, 20);
-  text("weatherMode", 240, 85);
-}
-
-
 ////////////////////////////////////////////////
 //////    MODIFY WEATHER DATA FUNCTION    //////
 ////////////////////////////////////////////////
@@ -464,4 +461,73 @@ void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
   
   // save altered XML file
   saveXML (xmlWeatherData, xmlSave);
+}
+
+
+
+//////////////////////////////////////////
+/////     AUXILIARY FUNCTIONS        /////
+//////////////////////////////////////////
+
+// This function displays weatherValue and weatherMode in the GUI
+// and is called in runScript()
+void displayReturnedValues() 
+{
+  
+  fill(255);
+  
+  //Convert weatherValue to a string variable and displays it
+  weatherValueStr = nf(weatherValue);
+  text(weatherValueStr, 160, 60, 30, 20);
+  text("weatherValue", 160, 85);
+  
+  //Checks weatherMode and displays Snow, Rain or None depending on the conditions
+  if (weatherMode == 1)
+  { 
+    weatherModeStr = "Rain";
+  }
+  else if (weatherMode == 2)
+  {
+    weatherModeStr = "Snow";
+  }
+  else
+  {
+    weatherModeStr = "None";
+  }
+  
+  text(weatherModeStr, 240, 60, 40, 20);
+  text("weatherMode", 240, 85);
+}
+
+// WIP //
+// Adds a logger to the program to keep track of changes to Olympia
+// Reference tutorial: http://www.instructables.com/id/Data-Logging-SensorsInputs-With-Processing/
+
+
+// Setup logWeatherData as new Table
+void logWeatherDataSetup()
+{
+  logWeatherData = new Table();
+  
+  // Add column headers to logWeatherData
+  logWeatherData.addColumn("Date");
+  logWeatherData.addColumn("Time");
+  logWeatherData.addColumn("WeatherOverride");
+  logWeatherData.addColumn("WeatherMode");
+  logWeatherData.addColumn("WeatherValue");
+}
+
+// Function that will write value to log
+
+void logWeatherDataWriteRow()
+{
+  TableRow newRow = logWeatherData.addRow();
+  
+  newRow.setString("Date", str(y) + "/" + str(m) + "/" + str(d));
+  newRow.setString("Time", str(h) + ":" + str(min));
+  newRow.setString("WeatherOverride", str(isOverridden));
+  newRow.setString("WeatherMode", weatherModeStr);
+  newRow.setString("WeatherValue", weatherValueStr); 
+  
+  saveTable(logWeatherData, "log/" + str(y) + str(m) + str(d) + "-" + str(h) + "h" + str(min) + ".csv");
 }
