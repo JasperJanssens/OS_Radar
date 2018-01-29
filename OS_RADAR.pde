@@ -55,12 +55,11 @@ int timerOverride;;
 
 // variables for logging
 Table logWeatherData;
-int d = day();
-int m = month();
-int y = year();
-int h = hour();
-int min = minute();
-String date;
+int InitD = day();
+int InitM = month();
+int InitY = year();
+int InitH = hour();
+int InitMin = minute();
 
 //////////////////////////////////
 //////    SETUP FUNCTION    //////
@@ -274,6 +273,7 @@ void draw ()
   {
     timer = 15;
     n1.setValue (timer);
+    displayReturnedValues();
     logWeatherDataWriteRow();
     runScript ();
   }
@@ -468,9 +468,8 @@ void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
 //////////////////////////////////////////
 /////     AUXILIARY FUNCTIONS        /////
 //////////////////////////////////////////
-
 // This function displays weatherValue and weatherMode in the GUI
-// and is called in runScript()
+
 void displayReturnedValues() 
 {
   
@@ -499,12 +498,9 @@ void displayReturnedValues()
   text("weatherMode", 240, 85);
 }
 
-// WIP //
+
 // Adds a logger to the program to keep track of changes to Olympia
-// Reference tutorial: http://www.instructables.com/id/Data-Logging-SensorsInputs-With-Processing/
-
-
-// Setup logWeatherData as new Table
+// Setup logWeatherData as a new Table
 void logWeatherDataSetup()
 {
   logWeatherData = new Table();
@@ -517,11 +513,17 @@ void logWeatherDataSetup()
   logWeatherData.addColumn("WeatherValue");
 }
 
-// Function that will write value to log
-
+// Function that will write the values to the log
 void logWeatherDataWriteRow()
 {
   TableRow newRow = logWeatherData.addRow();
+  
+  //Define date and time of the moment the log entry is written
+  int d = day();
+  int m = month();
+  int y = year();
+  int h = hour();
+  int min = minute();
   
   newRow.setString("Date", str(y) + "/" + str(m) + "/" + str(d));
   newRow.setString("Time", str(h) + ":" + str(min));
@@ -529,5 +531,6 @@ void logWeatherDataWriteRow()
   newRow.setString("WeatherMode", weatherModeStr);
   newRow.setString("WeatherValue", weatherValueStr); 
   
-  saveTable(logWeatherData, "log/" + str(y) + str(m) + str(d) + "-" + str(h) + "h" + str(min) + ".csv");
+  //Takes the Init* date and time variables as the logfile name
+  saveTable(logWeatherData, "log/" + str(InitY) + str(InitM) + str(InitD) + "-" + str(InitH) + "h" + str(InitMin) + ".csv"); 
 }
