@@ -54,12 +54,15 @@ float sliderValue = 50;
 int timerOverride;;
 
 // variables for logging
+// Current* strings are set in logWeatherDataWriteRow()
+// Init* Strings are used to set the start time of the log
 Table logWeatherData;
-int InitD = day();
-int InitM = month();
-int InitY = year();
-int InitH = hour();
-int InitMin = minute();
+String CurrentD, CurrentM, CurrentY, CurrentH, CurrentMin;
+String InitD = nf(day(), 2);
+String InitM = nf(month(), 2);
+String InitY = nf(year(), 4);
+String InitH = nf(hour(), 2);
+String InitMin = nf(minute(), 2);
 
 //////////////////////////////////
 //////    SETUP FUNCTION    //////
@@ -273,9 +276,8 @@ void draw ()
   {
     timer = 15;
     n1.setValue (timer);
-    displayReturnedValues();
-    logWeatherDataWriteRow();
     runScript ();
+    logWeatherDataWriteRow();
   }
 }
 
@@ -519,18 +521,18 @@ void logWeatherDataWriteRow()
   TableRow newRow = logWeatherData.addRow();
   
   //Define date and time of the moment the log entry is written
-  int d = day();
-  int m = month();
-  int y = year();
-  int h = hour();
-  int min = minute();
+  CurrentD = nf(day(), 2);
+  CurrentM = nf(month(), 2);
+  CurrentY = nf(year(), 4);
+  CurrentH = nf(hour(), 2);
+  CurrentMin = nf(minute(), 2);
   
-  newRow.setString("Date", str(y) + "/" + str(m) + "/" + str(d));
-  newRow.setString("Time", str(h) + ":" + str(min));
+  newRow.setString("Date", CurrentY + "/" + CurrentM + "/" + CurrentD);
+  newRow.setString("Time", CurrentH + ":" + CurrentMin);
   newRow.setString("WeatherOverride", str(isOverridden));
   newRow.setString("WeatherMode", weatherModeStr);
   newRow.setString("WeatherValue", weatherValueStr); 
   
   //Takes the Init* date and time variables as the logfile name
-  saveTable(logWeatherData, "log/" + str(InitY) + str(InitM) + str(InitD) + "-" + str(InitH) + "h" + str(InitMin) + ".csv"); 
+  saveTable(logWeatherData, "log/" + InitY + InitM + InitD + "-" + InitH + "h" + InitMin + ".csv"); 
 }
