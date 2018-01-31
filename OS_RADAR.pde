@@ -520,15 +520,15 @@ void logWeatherDataWriteRow()
 {
   TableRow newRow = logWeatherData.addRow();
   
-  //Define date and time of the moment the log entry is written
+  //Define date and time the moment the log entry is written
   CurrentD = nf(day(), 2);
   CurrentM = nf(month(), 2);
   CurrentY = nf(year(), 4);
   CurrentH = nf(hour(), 2);
   CurrentMin = nf(minute(), 2);
   
-  newRow.setString("Date", y + "/" + m + "/" + d);
-  newRow.setString("Time", h + ":" + min);
+  newRow.setString("Date", CurrentY + "/" + CurrentM + "/" + CurrentD);
+  newRow.setString("Time", CurrentH + ":" + CurrentMin);
   newRow.setString("WeatherOverride", str(isOverridden));
   newRow.setString("WeatherMode", weatherModeStr);
   newRow.setString("WeatherValue", weatherValueStr); 
