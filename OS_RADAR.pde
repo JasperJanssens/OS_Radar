@@ -520,7 +520,11 @@ void logWeatherDataWriteRow()
 {
   TableRow newRow = logWeatherData.addRow();
   
+<<<<<<< HEAD
   //Define date and time of the moment the log entry is written
+=======
+  //Define date and time the moment the log entry is written
+>>>>>>> origin/master
   CurrentD = nf(day(), 2);
   CurrentM = nf(month(), 2);
   CurrentY = nf(year(), 4);
