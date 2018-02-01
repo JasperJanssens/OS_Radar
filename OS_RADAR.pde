@@ -1,5 +1,5 @@
 //////////////////////////////////
-//////     OS_RADAR v3.0    //////
+//////     OS_RADAR v3.1    //////
 //////////////////////////////////
 
 /*
@@ -10,6 +10,17 @@ a video installation by David Claerbout
 
 This is a Processing v3.3.5 script written in Java
 using the controlP5 library for the user interface
+
+-----
+Date 2018/02/01
+v3.1 release
+
+This version was created by Haryo Sukmawanto for OLYMPIA STADION
+a video installation by David Claerbout
+
+OS_Radar now displays the weatherValues and weatherMode in the GUI. 
+It now also has a logger that will record these values for each session 
+for up three weeks in a .csv file found in log/
 */
 
 // import controlP5 library for UI
@@ -470,8 +481,8 @@ void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
 //////////////////////////////////////////
 /////     AUXILIARY FUNCTIONS        /////
 //////////////////////////////////////////
-// This function displays weatherValue and weatherMode in the GUI
 
+// This function displays weatherValue and weatherMode in the GUI
 void displayReturnedValues() 
 {
   
@@ -517,26 +528,37 @@ void logWeatherDataSetup()
 
 // Function that will write the values to the log
 void logWeatherDataWriteRow()
-{
-  TableRow newRow = logWeatherData.addRow();
-  
-<<<<<<< HEAD
-  //Define date and time of the moment the log entry is written
-=======
+{ 
   //Define date and time the moment the log entry is written
->>>>>>> origin/master
   CurrentD = nf(day(), 2);
   CurrentM = nf(month(), 2);
   CurrentY = nf(year(), 4);
   CurrentH = nf(hour(), 2);
   CurrentMin = nf(minute(), 2);
   
-  newRow.setString("Date", CurrentY + "/" + CurrentM + "/" + CurrentD);
-  newRow.setString("Time", CurrentH + ":" + CurrentMin);
-  newRow.setString("WeatherOverride", str(isOverridden));
-  newRow.setString("WeatherMode", weatherModeStr);
-  newRow.setString("WeatherValue", weatherValueStr); 
-  
+  // Check length of table, if it exceeds an amount then delete the first row
+  // and write new row after
+  if (logWeatherData.getRowCount() >= 2000)
+  {
+    logWeatherData.removeRow(0);
+    TableRow newRow = logWeatherData.addRow();
+    
+    newRow.setString("Date", CurrentY + "/" + CurrentM + "/" + CurrentD);
+    newRow.setString("Time", CurrentH + ":" + CurrentMin);
+    newRow.setString("WeatherOverride", str(isOverridden));
+    newRow.setString("WeatherMode", weatherModeStr);
+    newRow.setString("WeatherValue", weatherValueStr); 
+  }
+  else
+  { 
+    TableRow newRow = logWeatherData.addRow();
+    newRow.setString("Date", CurrentY + "/" + CurrentM + "/" + CurrentD);
+    newRow.setString("Time", CurrentH + ":" + CurrentMin);
+    newRow.setString("WeatherOverride", str(isOverridden));
+    newRow.setString("WeatherMode", weatherModeStr);
+    newRow.setString("WeatherValue", weatherValueStr);
+  }
+   
   //Takes the Init* date and time variables as the logfile name
-  saveTable(logWeatherData, "log/" + InitY + InitM + InitD + "-" + InitH + "h" + InitMin + ".csv"); 
+  saveTable(logWeatherData, "log/" + InitY + InitM + InitD + "-" + InitH + "h" + InitMin + ".csv");
 }
