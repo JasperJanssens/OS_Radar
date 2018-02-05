@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config>
-  <imgPosition x="150" y="160"/>
-  <!-- Input pixel coordinates you want to sample from desktop screenshot -->
-  <xmlWeatherData url="http://api.openweathermap.org/data/2.5/weather?APPID=feaab0b670df4f8205dd1880696b2ad7&amp;lat=52.514721&amp;lon=13.239444&amp;type=accurate&amp;mode=xml&amp;units=metric&amp;cnt=16"/>
-  <xmlSaveLocation path="weatherData.xml"/>
-  <imgLoad path="http://api.wunderground.com/api/3b81a66f1dfa29c8/radar/q/germany/berlin.png?newmaps=1"/>
-</config>

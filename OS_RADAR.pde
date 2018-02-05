@@ -12,10 +12,10 @@ This is a Processing v3.3.5 script written in Java
 using the controlP5 library for the user interface
 
 -----
-Date 2018/02/01
+Date 2018/02/05
 v3.1 release
 
-This version was created by Haryo Sukmawanto for OLYMPIA STADION
+This version was reworked by Haryo Sukmawanto and reviewed by Jasper Janssens for OLYMPIA STADION
 a video installation by David Claerbout
 
 OS_Radar now displays the weatherValues and weatherMode in the GUI. 
@@ -148,6 +148,8 @@ void setup ()
         weatherOverride ();
         modifyWeatherData (true, weatherMode, weatherValue, weatherClouds);
         timer = timerOverride;
+        displayReturnedValues ();
+        logWeatherDataWriteRow();
       }
       
       if (theEvent.getAction()==ControlP5.ACTION_RELEASE && on_off == false) 
@@ -166,6 +168,8 @@ void setup ()
       {
         weatherOverride ();
         modifyWeatherData (true, weatherMode, weatherValue, weatherClouds);
+        displayReturnedValues ();
+        logWeatherDataWriteRow();
       }
     }
   });
@@ -179,6 +183,8 @@ void setup ()
       {
         weatherOverride ();
         modifyWeatherData (true, weatherMode, weatherValue, weatherClouds);
+        displayReturnedValues ();
+        logWeatherDataWriteRow();
       }
     }
   });
@@ -188,7 +194,7 @@ void setup ()
   {
     public void controlEvent(CallbackEvent theEvent) 
     {
-      if ((theEvent.getAction()==ControlP5.ACTION_RELEASE || theEvent.getAction()==ControlP5.ACTION_RELEASE_OUTSIDE) && on_off == true) 
+      if ((theEvent.getAction()==ControlP5.ACTION_RELEASE || theEvent.getAction()==ControlP5.ACTION_RELEASE_OUTSIDE)) 
       {
         timer = timerOverride;
       }
@@ -200,9 +206,8 @@ void setup ()
   ///////////////////////////////////////
   
   loadConfig ();
-  runScript ();
   logWeatherDataSetup();
-  logWeatherDataWriteRow();
+  runScript ();
 }
 
 /////////////////////////////
@@ -240,6 +245,9 @@ void runScript ()
   
   // run displayReturnedValues here after sampleImage is called and values are set
   displayReturnedValues ();
+  
+  // Log the weather data
+  logWeatherDataWriteRow();
 }
 
 ////////////////////////////////////////////////
@@ -249,6 +257,9 @@ void runScript ()
 
 void weatherOverride ()
 {
+  // Set isOverridden boolean value
+  isOverridden = true;
+  
   if (rain_snow == true)
   { 
     weatherMode = 1;
@@ -257,19 +268,9 @@ void weatherOverride ()
   {
     weatherMode = 2;
   }
-    
-  // Set isOverridden boolean value
-  if (weatherMode == 1 || weatherMode == 2)
-  {
-    isOverridden = true;
-  }
-  else
-  {
-    isOverridden = false;
-  }
-    
-    weatherValue = sliderValue;
-    weatherClouds = map (sliderValue, 30, 100, 60, 100);
+        
+  weatherValue = sliderValue;
+  weatherClouds = map (sliderValue, 30, 100, 60, 100);
 }
 
 ///////////////////////////////
@@ -287,8 +288,11 @@ void draw ()
   {
     timer = 15;
     n1.setValue (timer);
+    
+    // Set isOverridden boolean value
+    isOverridden = false;
+    
     runScript ();
-    logWeatherDataWriteRow();
   }
 }
 
@@ -485,6 +489,9 @@ void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
 // This function displays weatherValue and weatherMode in the GUI
 void displayReturnedValues() 
 {
+  fill (50);
+  noStroke();
+  rect(160, 50, 160, 40);
   
   fill(255);
   
