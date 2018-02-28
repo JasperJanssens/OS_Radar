@@ -30,10 +30,10 @@ This is a Processing v3.3.5 script written in Java
 using the controlP5 library for the user interface
 
 -----
-Date 2018/02/01
+Date 2018/02/05
 v3.1 release
 
-This version was created by Haryo Sukmawanto for OLYMPIA STADION
+This version was reworked by Haryo Sukmawanto and reviewed by Jasper Janssens for OLYMPIA STADION
 a video installation by David Claerbout
 
 OS_Radar now displays the weatherValues and weatherMode in the GUI. 
@@ -67,7 +67,6 @@ boolean isImgValid;
 int weatherMode;
 float weatherValue;
 float weatherClouds;
-String weatherValueStr, weatherModeStr;
 
 // variables for creation of UI controls
 ControlP5 cp5;
@@ -92,6 +91,7 @@ String InitM = nf(month(), 2);
 String InitY = nf(year(), 4);
 String InitH = nf(hour(), 2);
 String InitMin = nf(minute(), 2);
+String weatherValueStr, weatherModeStr;
 
 //////////////////////////////////
 //////    SETUP FUNCTION    //////
@@ -549,6 +549,10 @@ public void logWeatherDataSetup()
   logWeatherData.addColumn("WeatherOverride");
   logWeatherData.addColumn("WeatherMode");
   logWeatherData.addColumn("WeatherValue");
+  logWeatherData.addColumn("Clouds"); 
+  logWeatherData.addColumn("Temperature");
+  logWeatherData.addColumn("WindDirection"); 
+  logWeatherData.addColumn("WindSpeed"); 
 }
 
 // Function that will write the values to the log
@@ -561,6 +565,11 @@ public void logWeatherDataWriteRow()
   CurrentH = nf(hour(), 2);
   CurrentMin = nf(minute(), 2);
   
+  String cloudsStr = xmlWeatherData.getChild ("clouds").getString("value");
+  String tempValueStr = xmlWeatherData.getChild ("temperature").getString("value");
+  String windCodeStr = xmlWeatherData.getChild ("wind").getChild("direction").getString("code");
+  String windValueStr = xmlWeatherData.getChild ("wind").getChild("speed").getString("value");
+  
   // Check length of table, if it exceeds an amount then delete the first row
   // and write new row after
   if (logWeatherData.getRowCount() >= 2000)
@@ -572,7 +581,11 @@ public void logWeatherDataWriteRow()
     newRow.setString("Time", CurrentH + ":" + CurrentMin);
     newRow.setString("WeatherOverride", str(isOverridden));
     newRow.setString("WeatherMode", weatherModeStr);
-    newRow.setString("WeatherValue", weatherValueStr); 
+    newRow.setString("WeatherValue", weatherValueStr);
+    newRow.setString("Clouds", cloudsStr); 
+    newRow.setString("Temperature", tempValueStr);
+    newRow.setString("WindSpeed", windValueStr);
+    newRow.setString("WindDirection", windCodeStr);
   }
   else
   { 
@@ -582,6 +595,10 @@ public void logWeatherDataWriteRow()
     newRow.setString("WeatherOverride", str(isOverridden));
     newRow.setString("WeatherMode", weatherModeStr);
     newRow.setString("WeatherValue", weatherValueStr);
+    newRow.setString("Clouds", cloudsStr); 
+    newRow.setString("Temperature", tempValueStr);
+    newRow.setString("WindSpeed", windValueStr);
+    newRow.setString("WindDirection", windCodeStr);
   }
    
   //Takes the Init* date and time variables as the logfile name
