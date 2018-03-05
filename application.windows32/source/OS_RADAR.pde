@@ -1,5 +1,5 @@
 //////////////////////////////////
-//////     OS_RADAR v3.0    //////
+//////     OS_RADAR v3.1    //////
 //////////////////////////////////
 
 /*
@@ -10,6 +10,17 @@ a video installation by David Claerbout
 
 This is a Processing v3.3.5 script written in Java
 using the controlP5 library for the user interface
+
+-----
+Date 2018/02/05
+v3.1 release
+
+This version was reworked by Haryo Sukmawanto and reviewed by Jasper Janssens for OLYMPIA STADION
+a video installation by David Claerbout
+
+OS_Radar now displays the weatherValues and weatherMode in the GUI. 
+It now also has a logger that will record these values for each session 
+for up three weeks in a .csv file found in log/
 */
 
 // import controlP5 library for UI
@@ -26,6 +37,7 @@ int positionX, positionY;
 String xmlUrl;
 String xmlSave;
 String imgLoad;
+String CurrentweatherMode;
 
 // variables for analyzing the sampled pixel
 float sampleH;
@@ -47,8 +59,21 @@ Slider s1;
 // variables for weather override, assigned to UI controls
 boolean on_off = false;
 boolean rain_snow = false;
+boolean isOverridden = false;
 float sliderValue = 50;
 int timerOverride;;
+
+// variables for logging
+// Current* strings are set in logWeatherDataWriteRow()
+// Init* Strings are used to set the start time of the log
+Table logWeatherData;
+String CurrentD, CurrentM, CurrentY, CurrentH, CurrentMin;
+String InitD = nf(day(), 2);
+String InitM = nf(month(), 2);
+String InitY = nf(year(), 4);
+String InitH = nf(hour(), 2);
+String InitMin = nf(minute(), 2);
+String weatherValueStr, weatherModeStr;
 
 //////////////////////////////////
 //////    SETUP FUNCTION    //////
@@ -68,6 +93,7 @@ void setup ()
   
   fill (50);
   rect (0, 0, width, 100);
+ 
   
   //////////////////////////////////
   //////   ADD UI CONTROLS    //////
@@ -122,6 +148,8 @@ void setup ()
         weatherOverride ();
         modifyWeatherData (true, weatherMode, weatherValue, weatherClouds);
         timer = timerOverride;
+        displayReturnedValues ();
+        logWeatherDataWriteRow();
       }
       
       if (theEvent.getAction()==ControlP5.ACTION_RELEASE && on_off == false) 
@@ -140,6 +168,8 @@ void setup ()
       {
         weatherOverride ();
         modifyWeatherData (true, weatherMode, weatherValue, weatherClouds);
+        displayReturnedValues ();
+        logWeatherDataWriteRow();
       }
     }
   });
@@ -153,6 +183,8 @@ void setup ()
       {
         weatherOverride ();
         modifyWeatherData (true, weatherMode, weatherValue, weatherClouds);
+        displayReturnedValues ();
+        logWeatherDataWriteRow();
       }
     }
   });
@@ -162,7 +194,7 @@ void setup ()
   {
     public void controlEvent(CallbackEvent theEvent) 
     {
-      if ((theEvent.getAction()==ControlP5.ACTION_RELEASE || theEvent.getAction()==ControlP5.ACTION_RELEASE_OUTSIDE) && on_off == true) 
+      if ((theEvent.getAction()==ControlP5.ACTION_RELEASE || theEvent.getAction()==ControlP5.ACTION_RELEASE_OUTSIDE)) 
       {
         timer = timerOverride;
       }
@@ -174,6 +206,7 @@ void setup ()
   ///////////////////////////////////////
   
   loadConfig ();
+  logWeatherDataSetup();
   runScript ();
 }
 
@@ -209,6 +242,12 @@ void runScript ()
   {
     modifyWeatherData (false, 0, 0, 0);
   }
+  
+  // run displayReturnedValues here after sampleImage is called and values are set
+  displayReturnedValues ();
+  
+  // Log the weather data
+  logWeatherDataWriteRow();
 }
 
 ////////////////////////////////////////////////
@@ -218,17 +257,20 @@ void runScript ()
 
 void weatherOverride ()
 {
-    if (rain_snow ==  true)
-    { 
-      weatherMode = 1;
-    }  
-    else
-    {
-      weatherMode = 2;
-    }
-    
-    weatherValue = sliderValue;
-    weatherClouds = map (sliderValue, 30, 100, 60, 100);
+  // Set isOverridden boolean value
+  isOverridden = true;
+  
+  if (rain_snow == true)
+  { 
+    weatherMode = 1;
+  }  
+  else
+  {
+    weatherMode = 2;
+  }
+        
+  weatherValue = sliderValue;
+  weatherClouds = map (sliderValue, 30, 100, 60, 100);
 }
 
 ///////////////////////////////
@@ -246,6 +288,10 @@ void draw ()
   {
     timer = 15;
     n1.setValue (timer);
+    
+    // Set isOverridden boolean value
+    isOverridden = false;
+    
     runScript ();
   }
 }
@@ -313,6 +359,7 @@ void sampleImage ()
     line (200, 170, 200, 270);
     noFill ();
     ellipse (200, 220, 50, 50);
+    
   }
 }
 
@@ -370,7 +417,7 @@ void analyzePixel ()
   }
 
   // snow
-  if (sampleH > 120 || sampleH < 200)
+  if (sampleH > 120 && sampleH < 200)
   {
     weatherMode = 2;
     
@@ -431,4 +478,111 @@ void modifyWeatherData (boolean isImgValid, int mode, float value, float clouds)
   
   // save altered XML file
   saveXML (xmlWeatherData, xmlSave);
+}
+
+
+
+//////////////////////////////////////////
+/////     AUXILIARY FUNCTIONS        /////
+//////////////////////////////////////////
+
+// This function displays weatherValue and weatherMode in the GUI
+void displayReturnedValues() 
+{
+  fill (50);
+  noStroke();
+  rect(160, 50, 160, 40);
+  
+  fill(255);
+  
+  //Convert weatherValue to a string variable and displays it
+  weatherValueStr = nf(weatherValue);
+  text(weatherValueStr, 160, 60, 30, 20);
+  text("weatherValue", 160, 85);
+  
+  //Checks weatherMode and displays Snow, Rain or None depending on the conditions
+  if (weatherMode == 1)
+  { 
+    weatherModeStr = "Rain";
+  }
+  else if (weatherMode == 2)
+  {
+    weatherModeStr = "Snow";
+  }
+  else
+  {
+    weatherModeStr = "None";
+  }
+  
+  text(weatherModeStr, 240, 60, 40, 20);
+  text("weatherMode", 240, 85);
+}
+
+
+// Adds a logger to the program to keep track of changes to Olympia
+// Setup logWeatherData as a new Table
+void logWeatherDataSetup()
+{
+  logWeatherData = new Table();
+  
+  // Add column headers to logWeatherData
+  logWeatherData.addColumn("Date");
+  logWeatherData.addColumn("Time");
+  logWeatherData.addColumn("WeatherOverride");
+  logWeatherData.addColumn("WeatherMode");
+  logWeatherData.addColumn("WeatherValue");
+  logWeatherData.addColumn("Clouds"); 
+  logWeatherData.addColumn("Temperature");
+  logWeatherData.addColumn("WindDirection"); 
+  logWeatherData.addColumn("WindSpeed"); 
+}
+
+// Function that will write the values to the log
+void logWeatherDataWriteRow()
+{ 
+  //Define date and time the moment the log entry is written
+  CurrentD = nf(day(), 2);
+  CurrentM = nf(month(), 2);
+  CurrentY = nf(year(), 4);
+  CurrentH = nf(hour(), 2);
+  CurrentMin = nf(minute(), 2);
+  
+  String cloudsStr = xmlWeatherData.getChild ("clouds").getString("value");
+  String tempValueStr = xmlWeatherData.getChild ("temperature").getString("value");
+  String windCodeStr = xmlWeatherData.getChild ("wind").getChild("direction").getString("code");
+  String windValueStr = xmlWeatherData.getChild ("wind").getChild("speed").getString("value");
+  
+  // Check length of table, if it exceeds an amount then delete the first row
+  // and write new row after
+  if (logWeatherData.getRowCount() >= 2000)
+  {
+    logWeatherData.removeRow(0);
+    TableRow newRow = logWeatherData.addRow();
+    
+    newRow.setString("Date", CurrentY + "/" + CurrentM + "/" + CurrentD);
+    newRow.setString("Time", CurrentH + ":" + CurrentMin);
+    newRow.setString("WeatherOverride", str(isOverridden));
+    newRow.setString("WeatherMode", weatherModeStr);
+    newRow.setString("WeatherValue", weatherValueStr);
+    newRow.setString("Clouds", cloudsStr); 
+    newRow.setString("Temperature", tempValueStr);
+    newRow.setString("WindSpeed", windValueStr);
+    newRow.setString("WindDirection", windCodeStr);
+  }
+  else
+  { 
+    TableRow newRow = logWeatherData.addRow();
+    newRow.setString("Date", CurrentY + "/" + CurrentM + "/" + CurrentD);
+    newRow.setString("Time", CurrentH + ":" + CurrentMin);
+    newRow.setString("WeatherOverride", str(isOverridden));
+    newRow.setString("WeatherMode", weatherModeStr);
+    newRow.setString("WeatherValue", weatherValueStr);
+    newRow.setString("Clouds", cloudsStr); 
+    newRow.setString("Temperature", tempValueStr);
+    newRow.setString("WindSpeed", windValueStr);
+    newRow.setString("WindDirection", windCodeStr);
+  }
+   
+  //Takes the Init* date and time variables as the logfile name
+  saveTable(logWeatherData, "log/" + InitY + InitM + InitD + "-" + InitH + "h" + InitMin + ".csv");
 }

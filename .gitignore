@@ -1,0 +1,6 @@
+# Config xmls 
+*.xml
+weatherData.xml
+
+# log
+log/*
