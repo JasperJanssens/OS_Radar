@@ -435,7 +435,7 @@ public void analyzePixel ()
   }
 
   // snow
-  if (sampleH > 120 || sampleH < 200)
+  if (sampleH > 120 && sampleH < 200)
   {
     weatherMode = 2;
     
